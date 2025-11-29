@@ -7,16 +7,26 @@ def catalogo(request):
     productos = Producto.objects.all()
     categorias = Categoria.objects.all()
     
+    # 1. Filtro por Categoría
     cat_id = request.GET.get('categoria')
-    query = request.GET.get('q')
-    
     if cat_id:
         productos = productos.filter(categoria_id=cat_id)
+        
+    # 2. Buscador
+    query = request.GET.get('q')
     if query:
         productos = productos.filter(nombre__icontains=query)
 
+    # 3. Filtro de Precios
+    orden = request.GET.get('orden')
+    if orden == 'menor':
+        productos = productos.order_by('precio_base') # Ascendente
+    elif orden == 'mayor':
+        productos = productos.order_by('-precio_base') # Descendente
+
     return render(request, 'tienda/catalogo.html', {
-        'productos': productos, 'categorias': categorias
+        'productos': productos, 
+        'categorias': categorias
     })
 
 # DETALLE
