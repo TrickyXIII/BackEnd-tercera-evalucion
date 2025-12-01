@@ -2,8 +2,8 @@ from django.contrib import admin
 from .models import Insumo, Categoria, Producto, Pedido
 
 class PedidoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cliente_nombre', 'estado', 'pago', 'fecha_solicitud')
-    list_filter = ('estado', 'pago')
+    list_display = ('id', 'cliente_nombre', 'estado', 'pago', 'origen', 'fecha_solicitud')
+    list_filter = ('estado', 'pago', 'origen')
     readonly_fields = ('token',) # no se toca
 
 admin.site.register(Insumo)

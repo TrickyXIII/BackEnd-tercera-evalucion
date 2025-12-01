@@ -47,6 +47,7 @@ def crear_pedido(request, producto_id=None):
             descripcion=request.POST.get('descripcion'),
             fecha_necesaria=request.POST.get('fecha') or None,
             producto_ref=producto_obj,
+            origen='web',
             imagen_referencia=request.FILES.get('imagen')
         )
         # Redirigir al último pedido creado para mostrar su token

@@ -42,11 +42,17 @@ class Pedido(models.Model):
     descripcion = models.TextField()
     fecha_necesaria = models.DateField(null=True, blank=True)
     imagen_referencia = models.ImageField(upload_to='pedidos/', blank=True, null=True)
-    
+    ORIGENES = [
+        ('web', 'Sitio Web'),
+        ('instagram', 'Instagram'),
+        ('facebook', 'Facebook'),
+        ('whatsapp', 'WhatsApp'),
+        ('presencial', 'Presencial'),
+    ]
     # Gestión administrativa
     estado = models.CharField(max_length=20, choices=ESTADOS, default='solicitado')
     pago = models.CharField(max_length=20, choices=PAGOS, default='pendiente')
     token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     fecha_solicitud = models.DateTimeField(auto_now_add=True)
-
+    origen = models.CharField(max_length=20, choices=ORIGENES, default='web')
     def __str__(self): return f"Pedido {self.id} - {self.cliente_nombre}"
