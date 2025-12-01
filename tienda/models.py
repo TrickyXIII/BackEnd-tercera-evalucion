@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from django.core.exceptions import ValidationError
 
 # GESTIÓN INTERNA (INSUMOS)
 class Insumo(models.Model):
@@ -7,6 +8,8 @@ class Insumo(models.Model):
     tipo = models.CharField(max_length=50)
     cantidad = models.IntegerField(default=0)
     unidad = models.CharField(max_length=20, blank=True)
+    marca = models.CharField(max_length=50, blank=True)
+    color = models.CharField(max_length=50, blank=True)
     
     def __str__(self): return f"{self.nombre} ({self.cantidad})"
 
@@ -21,6 +24,8 @@ class Producto(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     precio_base = models.IntegerField()
     imagen = models.ImageField(upload_to='productos/')
+    imagen_2 = models.ImageField(upload_to='productos/', blank=True, null=True)
+    imagen_3 = models.ImageField(upload_to='productos/', blank=True, null=True)
     destacado = models.BooleanField(default=False)
 
     def __str__(self): return self.nombre
@@ -49,10 +54,19 @@ class Pedido(models.Model):
         ('whatsapp', 'WhatsApp'),
         ('presencial', 'Presencial'),
     ]
-    # Gestión administrativa
+    # GESTRIÓN ADMINISTRATIVA
     estado = models.CharField(max_length=20, choices=ESTADOS, default='solicitado')
     pago = models.CharField(max_length=20, choices=PAGOS, default='pendiente')
     token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     fecha_solicitud = models.DateTimeField(auto_now_add=True)
     origen = models.CharField(max_length=20, choices=ORIGENES, default='web')
     def __str__(self): return f"Pedido {self.id} - {self.cliente_nombre}"
+
+    # VALIDACIÓN DEL PAGO
+    def clean(self):
+        if self.estado in ['entregada', 'realizada'] and self.pago == 'pendiente':
+            raise ValidationError('No se puede finalizar/entregar un pedido si el pago está pendiente.')
+
+    def save(self, *args, **kwargs):
+        self.full_clean() # Llama a la validación antes de guardar
+        super().save(*args, **kwargs)
