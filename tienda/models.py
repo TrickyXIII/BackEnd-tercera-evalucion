@@ -34,12 +34,19 @@ class Producto(models.Model):
 class Pedido(models.Model):
     
     ESTADOS = [
-        ('solicitado', 'Solicitado'), ('aprobado', 'Aprobado'),
-        ('proceso', 'En proceso'), ('realizada', 'Realizada'),
-        ('entregada', 'Entregada'), ('cancelada', 'Cancelada'),
+        ('solicitado', 'Solicitado'), 
+        ('aprobado', 'Aprobado'),
+        ('proceso', 'En proceso'),
+        ('realizada', 'Realizada'),
+        ('entregada', 'Entregada'), 
+        ('cancelada', 'Cancelada'),
         ('finalizada', 'Finalizada'),
     ]
-    PAGOS = [('pendiente', 'Pendiente'), ('pagado', 'Pagado')]
+    PAGOS = [
+        ('pendiente', 'Pendiente'), 
+        ('parcial', 'Parcial'),
+        ('pagado', 'Pagado')
+    ]
     
     # Datos del cliente y pedido
     cliente_nombre = models.CharField(max_length=100)
