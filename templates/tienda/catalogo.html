@@ -38,12 +38,20 @@
 <div class="row">
     {% for p in productos %}
     <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm">
+        <div class="card h-100 shadow-sm position-relative">
+            
+            {% if p.destacado %}
+                <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 shadow-sm">
+                    Destacado
+                </span>
+            {% endif %}
+
             {% if p.imagen %}
                 <img src="{{ p.imagen.url }}" class="card-img-top" style="height: 250px; object-fit: cover;">
             {% else %}
                 <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 250px;">Sin Imagen</div>
             {% endif %}
+            
             <div class="card-body">
                 <h5 class="card-title">{{ p.nombre }}</h5>
                 <h4 class="text-success">${{ p.precio_base }}</h4>
