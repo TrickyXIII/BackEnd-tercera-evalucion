@@ -37,6 +37,7 @@ class Pedido(models.Model):
         ('solicitado', 'Solicitado'), ('aprobado', 'Aprobado'),
         ('proceso', 'En proceso'), ('realizada', 'Realizada'),
         ('entregada', 'Entregada'), ('cancelada', 'Cancelada'),
+        ('finalizada', 'Finalizada'),
     ]
     PAGOS = [('pendiente', 'Pendiente'), ('pagado', 'Pagado')]
     
