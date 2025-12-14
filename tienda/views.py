@@ -1,6 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Producto, Pedido, Categoria
+from rest_framework import viewsets, mixins
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import InsumoSerializer, PedidoSerializer
+from .models import Insumo 
+from django.db.models import Count
+from django.contrib.auth.decorators import login_required
 
 # CATÁLOGO
 def catalogo(request):
@@ -71,3 +78,38 @@ def seguimiento(request, token=None):
             messages.error(request, "Código no encontrado")
             
     return render(request, 'tienda/seguimiento.html', {'pedido': pedido})
+
+# --- APIS ---
+class InsumoViewSet(viewsets.ModelViewSet):
+    queryset = Insumo.objects.all()
+    serializer_class = InsumoSerializer
+
+class PedidoViewSet(mixins.CreateModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    viewsets.GenericViewSet):
+    queryset = Pedido.objects.all()
+    serializer_class = PedidoSerializer
+
+@api_view(['GET'])
+def filtrar_pedidos(request):
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+    estado = request.GET.get('estado')
+
+    pedidos = Pedido.objects.all()
+    if fecha_inicio and fecha_fin:
+        pedidos = pedidos.filter(fecha_solicitud__date__range=[fecha_inicio, fecha_fin])
+    if estado:
+        pedidos = pedidos.filter(estado=estado)
+
+    serializer = PedidoSerializer(pedidos, many=True)
+    return Response(serializer.data)
+
+# --- REPORTE ---
+@login_required
+def reporte(request):
+    data = Pedido.objects.values('estado').annotate(total=Count('id'))
+    labels = [d['estado'] for d in data]
+    values = [d['total'] for d in data]
+    return render(request, 'tienda/reporte.html', {'labels': labels, 'values': values})
