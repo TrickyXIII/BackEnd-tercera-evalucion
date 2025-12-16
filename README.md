@@ -55,3 +55,34 @@ Admin: http://127.0.0.1:8000/admin/
 Usuario: admin
 
 Clave: admin
+
+# Instrucciones de Deploy (Render)
+
+Este proyecto está configurado para desplegarse fácilmente en Render.
+
+## Pasos para el despliegue:
+
+1.  **Crear servicio:**
+    * Entra a [Render.com](https://render.com/) y crea un "New Web Service".
+    * Conecta tu repositorio de GitHub.
+
+2.  **Configuración:**
+    Usa los siguientes comandos al configurar el servicio:
+
+    * **Runtime:** Python 3
+    * **Build Command:**
+        ```bash
+        pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+        ```
+    * **Start Command:**
+        ```bash
+        gunicorn core.wsgi:application
+        ```
+
+3.  **Crear Administrador (Superusuario):**
+    Una vez que el sitio esté en línea ("Live"):
+    * Ve a la pestaña **"Shell"** en el panel de Render.
+    * Ejecuta el siguiente comando y sigue las instrucciones:
+        ```bash
+        python manage.py createsuperuser
+        ```
